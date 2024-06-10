@@ -15,7 +15,7 @@ import com.warehouse.admin.utility.ResponseStructure;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/v1")
 public class AdminController {
 
 	@Autowired
@@ -25,4 +25,10 @@ public class AdminController {
   public ResponseEntity<ResponseStructure<AdminResponse>> createSuperAdmin(@RequestBody @Valid AdminRequest adminRequest){
 	  return adminService.createSuperAdmin(adminRequest);
   }
+	
+	@PostMapping("/admins")
+ public ResponseEntity<ResponseStructure<AdminResponse>> createAdmins(@RequestBody AdminRequest adminRequest){
+		return adminService.createAdmins(adminRequest);
+	}
+	
 }

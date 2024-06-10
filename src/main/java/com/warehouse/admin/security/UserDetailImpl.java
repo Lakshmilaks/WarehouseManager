@@ -1,5 +1,6 @@
 package com.warehouse.admin.security;
 
+
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -11,7 +12,7 @@ import com.warehouse.admin.entity.Admin;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class UserDetailImpl implements UserDetails{
+public class UserDetailImpl implements UserDetails {
 
 	private Admin admin;
 
