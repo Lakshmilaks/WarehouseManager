@@ -3,11 +3,12 @@ package com.warehouse.admin.serviceimpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import com.warehouse.admin.entity.Admin;
 import com.warehouse.admin.entity.Warehouse;
 import com.warehouse.admin.enums.AdminType;
+import com.warehouse.admin.exception.AdminNotFoundException;
 import com.warehouse.admin.exception.IllegalOperationException;
 import com.warehouse.admin.exception.WareHouseNotFoundByIdException;
 import com.warehouse.admin.mapper.AdminMapper;
@@ -66,4 +67,20 @@ public class AdminServiceImpl implements AdminService{
 				
 	   
 }
+
+	@Override
+	public ResponseEntity<ResponseStructure<AdminResponse>> updateAdmin(AdminRequest adminRequest) {
+	String email =	SecurityContextHolder.getContext().getAuthentication().getName();
+		return  adminRepo.findByEmail(email).map(existadmin->{
+			Admin admin = adminMapper.mapAdminRequestToAdmin(adminRequest, new Admin());
+			admin.setAdminId(existadmin.getAdminId());
+			admin.setAdminType(existadmin.getAdminType());
+			admin = adminRepo.save(admin);
+						
+			return ResponseEntity.ok(new ResponseStructure<AdminResponse>()
+					.setStatus(HttpStatus.OK.value()).setMessage("Admin is updated")
+					.setData(adminMapper.mapAdminResponseToAdmin(admin)));
+		}).orElseThrow(() -> new AdminNotFoundException("Inavalid AdminId"));
+	}
+
 }
