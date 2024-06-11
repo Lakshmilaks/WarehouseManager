@@ -15,6 +15,7 @@ import com.warehouse.admin.entity.Admin;
 import com.warehouse.admin.entity.Warehouse;
 import com.warehouse.admin.enums.AdminType;
 import com.warehouse.admin.enums.Privilege;
+import com.warehouse.admin.exception.WareHouseNotFoundByIdException;
 import com.warehouse.admin.mapper.WarehouseMapper;
 import com.warehouse.admin.repository.WarehouseRepo;
 import com.warehouse.admin.requestdto.WarehouseRequest;
@@ -43,6 +44,21 @@ public class WarehouseServiceImpl implements WarehouseService{
 					.setStatus(HttpStatus.CREATED.value())
 					.setMessage("Warehouse Created!!!!")
 					.setData(warehouseMapper.mapWarehouseResponseToWarehouse(warehouse)));
+	}
+
+
+	@Override
+	public ResponseEntity<ResponseStructure<WarehouseResponse>> updateWarehouse(WarehouseRequest warehouseRequest,
+			long warehouseId) {
+		return warehouseRepo.findById(warehouseId).map(existwarehouse -> {
+			existwarehouse = warehouseMapper.mapWarehouseRequestToWarehouse(warehouseRequest, existwarehouse);
+			existwarehouse.setWareHouseId(warehouseId);
+			existwarehouse = warehouseRepo.save(existwarehouse);
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<WarehouseResponse>()
+					.setStatus(HttpStatus.OK.value()).setMessage("warehouse is updated")
+					.setData(warehouseMapper.mapWarehouseResponseToWarehouse(existwarehouse)));
+		}).orElseThrow(() -> new WareHouseNotFoundByIdException("warehouseId is not present in database"));
+	
 	}
 
 	

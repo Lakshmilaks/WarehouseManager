@@ -12,4 +12,7 @@ public interface WarehouseService {
 
 	ResponseEntity<ResponseStructure<WarehouseResponse>> createWarehouse(@Valid WarehouseRequest warehouseRequest);
 
+	ResponseEntity<ResponseStructure<WarehouseResponse>> updateWarehouse(WarehouseRequest warehouseRequest,
+			long warehouseId);
+
 }

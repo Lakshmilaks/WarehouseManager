@@ -16,6 +16,7 @@ import com.warehouse.admin.repository.AdminRepo;
 import com.warehouse.admin.repository.WarehouseRepo;
 import com.warehouse.admin.requestdto.AdminRequest;
 import com.warehouse.admin.responsedto.AdminResponse;
+import com.warehouse.admin.responsedto.WarehouseResponse;
 import com.warehouse.admin.service.AdminService;
 import com.warehouse.admin.utility.ResponseStructure;
 
@@ -67,20 +68,35 @@ public class AdminServiceImpl implements AdminService{
 				
 	   
 }
+	
 
 	@Override
 	public ResponseEntity<ResponseStructure<AdminResponse>> updateAdmin(AdminRequest adminRequest) {
 	String email =	SecurityContextHolder.getContext().getAuthentication().getName();
 		return  adminRepo.findByEmail(email).map(existadmin->{
-			Admin admin = adminMapper.mapAdminRequestToAdmin(adminRequest, new Admin());
-			admin.setAdminId(existadmin.getAdminId());
-			admin.setAdminType(existadmin.getAdminType());
-			admin = adminRepo.save(admin);
+			existadmin = adminMapper.mapAdminRequestToAdmin(adminRequest, existadmin);
+			
+			existadmin = adminRepo.save(existadmin);
 						
 			return ResponseEntity.ok(new ResponseStructure<AdminResponse>()
 					.setStatus(HttpStatus.OK.value()).setMessage("Admin is updated")
-					.setData(adminMapper.mapAdminResponseToAdmin(admin)));
+					.setData(adminMapper.mapAdminResponseToAdmin(existadmin)));
 		}).orElseThrow(() -> new AdminNotFoundException("Inavalid AdminId"));
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<AdminResponse>> updateAdminbySuperAdmin(AdminRequest adminRequest,
+			long adminId) {
+		return adminRepo.findById(adminId).map(admin->{
+			admin = adminMapper.mapAdminRequestToAdmin(adminRequest, admin);
+			//admin.setAdminId(adminId);
+			admin=adminRepo.save(admin);
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<AdminResponse>()
+					.setStatus(HttpStatus.OK.value())
+					.setMessage("admin is updated by super admin")
+					.setData(adminMapper.mapAdminResponseToAdmin(admin)));
+		}).orElseThrow(() -> new AdminNotFoundException("adminId is not present in database"));
+		
 	}
 
 }
