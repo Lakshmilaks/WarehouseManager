@@ -1,5 +1,7 @@
 package com.warehouse.admin.serviceimpl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -97,6 +99,25 @@ public class AdminServiceImpl implements AdminService{
 					.setData(adminMapper.mapAdminResponseToAdmin(admin)));
 		}).orElseThrow(() -> new AdminNotFoundException("adminId is not present in database"));
 		
+	}
+	
+	@Override
+	public ResponseEntity<ResponseStructure<AdminResponse>> findAdmin(long adminId) {
+		return adminRepo.findById(adminId).map(admin->{
+			return ResponseEntity.ok(new ResponseStructure<AdminResponse>()
+					.setStatus(HttpStatus.FOUND.value())
+					.setMessage("Admin fetched Successfully")
+					.setData(adminMapper.mapAdminResponseToAdmin(admin)));
+		}).orElseThrow(()->new AdminNotFoundException("Invalid adminId"));
+	}
+	
+	@Override
+	public ResponseEntity<ResponseStructure<List<AdminResponse>>> findAdmins() {
+	List<AdminResponse> admins = adminRepo.findAllByAdminType(AdminType.ADMIN).stream().map(admin->adminMapper.mapAdminResponseToAdmin(admin)).toList();
+			return ResponseEntity.ok(new ResponseStructure<List<AdminResponse>>()
+					.setStatus(HttpStatus.FOUND.value())
+					.setMessage("Admin fetched Successfully")
+					.setData(admins));
 	}
 
 }

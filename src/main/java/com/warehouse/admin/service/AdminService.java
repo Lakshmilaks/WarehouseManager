@@ -1,5 +1,7 @@
 package com.warehouse.admin.service;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 
 import com.warehouse.admin.requestdto.AdminRequest;
@@ -17,6 +19,10 @@ public interface AdminService {
 	ResponseEntity<ResponseStructure<AdminResponse>> updateAdmin(AdminRequest adminRequest);
 
 	ResponseEntity<ResponseStructure<AdminResponse>> updateAdminbySuperAdmin(AdminRequest adminRequest, long adminId);
+
+	ResponseEntity<ResponseStructure<AdminResponse>> findAdmin(long adminId);
+
+	ResponseEntity<ResponseStructure<List<AdminResponse>>> findAdmins();
 
 	
 }

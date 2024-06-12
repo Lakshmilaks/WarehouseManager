@@ -1,8 +1,11 @@
 package com.warehouse.admin.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -47,4 +50,17 @@ public class AdminController {
 	public ResponseEntity<ResponseStructure<AdminResponse>> updateAdminbySuperAdmin(@PathVariable long adminId, @RequestBody AdminRequest adminRequest){
 		return adminService.updateAdminbySuperAdmin(adminRequest,adminId);
 	}
+	@GetMapping("/admins/{adminId}")
+	public ResponseEntity<ResponseStructure<AdminResponse>> findAdmin(@PathVariable long adminId)
+	{
+		return adminService.findAdmin(adminId);
+	}
+	
+	@GetMapping("/admins")
+	public ResponseEntity<ResponseStructure<List<AdminResponse>>> findAdmins()
+	{
+		return adminService.findAdmins();
+	}
+	
+	
 }
