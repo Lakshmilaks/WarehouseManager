@@ -1,12 +1,11 @@
 package com.warehouse.admin.mapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.warehouse.admin.entity.Address;
 import com.warehouse.admin.requestdto.AddressRequest;
 import com.warehouse.admin.responsedto.AddressResponse;
+
 @Component
 public class AddressMapper {
 	

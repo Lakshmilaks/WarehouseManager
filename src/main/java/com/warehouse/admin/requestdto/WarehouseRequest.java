@@ -1,5 +1,7 @@
 package com.warehouse.admin.requestdto;
 
+import com.warehouse.admin.responsedto.AddressResponse;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -15,4 +17,5 @@ public class WarehouseRequest {
 	@NotBlank(message = "StoreHouse name can not be blank")
 	@Pattern(regexp = "^[a-zA-Z ]+$", message = "Name must contain only letters.")
 	private String warehousename;
+	
 }

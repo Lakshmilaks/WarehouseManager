@@ -1,4 +1,6 @@
 package com.warehouse.admin.controller;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,7 @@ import com.warehouse.admin.requestdto.AddressRequest;
 import com.warehouse.admin.requestdto.AdminRequest;
 import com.warehouse.admin.responsedto.AddressResponse;
 import com.warehouse.admin.responsedto.AdminResponse;
+import com.warehouse.admin.responsedto.WarehouseResponse;
 import com.warehouse.admin.service.AddressService;
 import com.warehouse.admin.utility.ResponseStructure;
 
@@ -38,6 +41,11 @@ public class AddressController {
 	@GetMapping("/{addressId}")
 	public ResponseEntity<ResponseStructure<AddressResponse>> findAddress(@PathVariable long addressId){
 		return addressService.findAddress(addressId);
+	}
+	
+	@GetMapping("cities/{city}/warehouses")
+	public ResponseEntity<ResponseStructure<List<WarehouseResponse>>> findWarehousesByCity(String city){
+		return addressService.findWarehousesByCity(city);
 	}
 	
 }

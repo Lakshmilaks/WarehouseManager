@@ -1,5 +1,7 @@
 package com.warehouse.admin.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.warehouse.admin.requestdto.WarehouseRequest;
+import com.warehouse.admin.responsedto.AddressResponse;
 import com.warehouse.admin.responsedto.WarehouseResponse;
 import com.warehouse.admin.service.WarehouseService;
 import com.warehouse.admin.utility.ResponseStructure;
@@ -39,4 +42,17 @@ public class WarehouseController {
 		return warehouseService.updateWarehouse(warehouseRequest,warehouseId);
 				
 	}
+	
+		@GetMapping("/warehouse/{warehouseId}")
+	public ResponseEntity<ResponseStructure<WarehouseResponse>> findWarehouse(@PathVariable long warehouseId)
+	{
+		return warehouseService.findWarehouse(warehouseId);
+	}
+	
+	@GetMapping("/warehouses")
+	public ResponseEntity<ResponseStructure<List<WarehouseResponse>>> findWarehouses(){
+		return warehouseService.findWarehouses();
+	}
+	
+	
 }

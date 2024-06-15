@@ -6,6 +6,8 @@ import java.util.List;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.UUID;
 
+import com.warehouse.admin.responsedto.AddressResponse;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,12 +29,15 @@ import lombok.Setter;
 public class Warehouse {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long wareHouseId;
-	
+	private long wareHouseId;
 	private String warehousename;
-	private long totalCapacity=0l;
+	private double totalCapacity;
 	@OneToOne
 	private Admin admin;
-	@OneToMany
+	@OneToMany(mappedBy = "warehouse")
 	private List<Storage> storages = new ArrayList();
+	@OneToOne
+	private Address address;
+	
+	
 }

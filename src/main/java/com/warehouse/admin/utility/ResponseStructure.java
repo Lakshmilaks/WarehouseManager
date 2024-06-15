@@ -1,5 +1,7 @@
 package com.warehouse.admin.utility;
 
+import org.springframework.stereotype.Component;
+
 import com.warehouse.admin.responsedto.WarehouseResponse;
 
 import lombok.AllArgsConstructor;
@@ -10,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Component
 public class ResponseStructure<T> {
 
 	private int status;

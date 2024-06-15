@@ -1,5 +1,7 @@
 package com.warehouse.admin.service;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 
 import com.warehouse.admin.requestdto.WarehouseRequest;
@@ -14,5 +16,13 @@ public interface WarehouseService {
 
 	ResponseEntity<ResponseStructure<WarehouseResponse>> updateWarehouse(WarehouseRequest warehouseRequest,
 			long warehouseId);
+
+	ResponseEntity<ResponseStructure<WarehouseResponse>> findWarehouse(long warehouseId);
+
+	ResponseEntity<ResponseStructure<List<WarehouseResponse>>> findWarehouses();
+
+
+
+	
 
 }
