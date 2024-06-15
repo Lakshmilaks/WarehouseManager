@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.warehouse.admin.mapper.StorageMapper;
 import com.warehouse.admin.requestdto.StorageRequest;
 import com.warehouse.admin.responsedto.StorageResponse;
 import com.warehouse.admin.service.StorageService;
@@ -24,6 +25,7 @@ public class StorageController {
 
 	@Autowired
 	private StorageService storageService;
+
 
 	@PostMapping("/warehouse/{warehouseId}/storage")
 	@PreAuthorize("hasAuthority('CREATE_STORAGE')")
@@ -37,5 +39,13 @@ public class StorageController {
 	public ResponseEntity<ResponseStructure<StorageResponse>> updateStorage(@RequestBody StorageRequest storageRequest,
 			@PathVariable long storageId ){
 		return storageService.updateStorage(storageRequest,storageId);
+	}
+
+	@PostMapping("/demo/{lengthInMeter}/{breadthInMeter}/{heightInMeter}/{capacityInKg}")
+	public StorageResponse findFirstByLengthAndBreadthAndCapacity(@PathVariable double lengthInMeter,
+			@PathVariable double  breadthInMeter,
+			@PathVariable double heightInMeter,
+			@PathVariable  double capacityInKg) {
+		return storageService.findFirstByLengthAndBreadthAndCapacity(lengthInMeter,breadthInMeter,heightInMeter,capacityInKg);
 	}
 }

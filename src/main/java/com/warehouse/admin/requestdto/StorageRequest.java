@@ -9,10 +9,10 @@ import lombok.Getter;
 public class StorageRequest {
 	private String blockname;
 	private String section;
-	private Double lengthInMeter;
-	private Double breadthInMeter;
-	private Double heightInMeter;
+	private double lengthInMeter;
+	private double breadthInMeter;
+	private double heightInMeter;
 	
 	private List<MaterialTypes> materialTypes;
-	private Double capacityInKg;
+	private double capacityInKg;
 }

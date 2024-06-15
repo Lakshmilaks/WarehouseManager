@@ -8,7 +8,7 @@ import com.warehouse.admin.utility.ResponseStructure;
 
 public interface ClientService {
 
-	ResponseEntity<ResponseStructure<String>> createClient(ClientRequest clientRequest);
+	ResponseEntity<ResponseStructure<ClientResponse>> createClient(ClientRequest clientRequest);
 
 
 }

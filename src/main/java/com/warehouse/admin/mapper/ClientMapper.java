@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 
 import com.warehouse.admin.entity.Client;
 import com.warehouse.admin.requestdto.ClientRequest;
-import com.warehouse.admin.responsedto.ApikeyResponse;
 import com.warehouse.admin.responsedto.ClientResponse;
 
 @Component
@@ -18,13 +17,6 @@ public class ClientMapper {
 	}
 	
 	public ClientResponse mapClientToClientResponse(Client client) {
-		ApikeyResponse apikeyResponse = new ApikeyResponse();
-        String apiKey = apikeyResponse.generateApiKey();
-		return ClientResponse.builder().clientId(client.getClientId())
-				.apikey(apiKey)
-				.businessName(client.getBusinessName())
-				.email(client.getEmail())
-				.contactno(client.getContactno())
-				.build();
+				return ClientResponse.builder().apikey(client.getApikey()).build();
 	}
 }

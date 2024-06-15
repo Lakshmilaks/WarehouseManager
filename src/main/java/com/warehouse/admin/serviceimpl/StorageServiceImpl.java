@@ -52,6 +52,7 @@ public class StorageServiceImpl implements StorageService{
 			noOfStorageUnits--;
 		}
 		storages = storageRepo.saveAll(storages);
+		
 
 		warehouse.setTotalCapacity(totalCapacity);
 		warehouse.setStorages(storages);
@@ -85,6 +86,17 @@ public class StorageServiceImpl implements StorageService{
         }).orElseThrow(() -> new StorageNotExistException("StorageId is not exist"));
 	
 	}
+	///---------------------------------------------------------------------------------------------
 
-
+	@Override
+	public StorageResponse findFirstByLengthAndBreadthAndCapacity(double lengthInMeter, double breadthInMeter,
+			double heightInMeter, double capacityInKg) {
+//		   storageRepo.findFirstByLengthAndBreadthAndCapacity(lengthInMeter, breadthInMeter, heightInMeter, capacityInKg)
+//	                .map(storage -> storageMapper.mapStorageToStorageResponse(storage))
+//	                .orElseThrow(() -> new StorageNotExistException("No storage found with the given dimensions and capacity"));
+//	}
+//	
+	return null;
+   
+}
 }

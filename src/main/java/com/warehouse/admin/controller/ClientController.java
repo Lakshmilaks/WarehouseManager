@@ -20,7 +20,7 @@ public class ClientController {
 	private ClientService clientService;
 	
 	@PostMapping("/clients")
-	public ResponseEntity<ResponseStructure<String>> createClient(@RequestBody ClientRequest clientRequest) {
+	public ResponseEntity<ResponseStructure<ClientResponse>> createClient(@RequestBody ClientRequest clientRequest) {
 		return clientService.createClient(clientRequest);
 	}
 	
