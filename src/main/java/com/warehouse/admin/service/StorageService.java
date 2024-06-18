@@ -15,8 +15,8 @@ public interface StorageService {
 
 	ResponseEntity<ResponseStructure<StorageResponse>> updateStorage(StorageRequest storageRequest, long storageId);
 
-	StorageResponse findFirstByLengthAndBreadthAndCapacity(double lengthInMeter, double breadthInMeter,
-			double heightInMeter, double capacityInKg);
+//	StorageResponse findFirstByLengthAndBreadthAndCapacity(double lengthInMeter, double breadthInMeter,
+//			double heightInMeter, double capacityInKg);
 
 
 	 

@@ -41,11 +41,11 @@ public class StorageController {
 		return storageService.updateStorage(storageRequest,storageId);
 	}
 
-	@PostMapping("/demo/{lengthInMeter}/{breadthInMeter}/{heightInMeter}/{capacityInKg}")
-	public StorageResponse findFirstByLengthAndBreadthAndCapacity(@PathVariable double lengthInMeter,
-			@PathVariable double  breadthInMeter,
-			@PathVariable double heightInMeter,
-			@PathVariable  double capacityInKg) {
-		return storageService.findFirstByLengthAndBreadthAndCapacity(lengthInMeter,breadthInMeter,heightInMeter,capacityInKg);
-	}
+//	@PostMapping("/demo/{lengthInMeter}/{breadthInMeter}/{heightInMeter}/{capacityInKg}")
+//	public StorageResponse findFirstByLengthAndBreadthAndCapacity(@PathVariable double lengthInMeter,
+//			@PathVariable double  breadthInMeter,
+//			@PathVariable double heightInMeter,
+//			@PathVariable  double capacityInKg) {
+//		return storageService.findFirstByLengthAndBreadthAndCapacity(lengthInMeter,breadthInMeter,heightInMeter,capacityInKg);
+//	}
 }

@@ -88,15 +88,15 @@ public class StorageServiceImpl implements StorageService{
 	}
 	///---------------------------------------------------------------------------------------------
 
-	@Override
-	public StorageResponse findFirstByLengthAndBreadthAndCapacity(double lengthInMeter, double breadthInMeter,
-			double heightInMeter, double capacityInKg) {
-//		   storageRepo.findFirstByLengthAndBreadthAndCapacity(lengthInMeter, breadthInMeter, heightInMeter, capacityInKg)
-//	                .map(storage -> storageMapper.mapStorageToStorageResponse(storage))
-//	                .orElseThrow(() -> new StorageNotExistException("No storage found with the given dimensions and capacity"));
-//	}
-//	
-	return null;
+//	@Override
+//	public StorageResponse findFirstByLengthAndBreadthAndCapacity(double lengthInMeter, double breadthInMeter,
+//			double heightInMeter, double capacityInKg) {
+////		   storageRepo.findFirstByLengthAndBreadthAndCapacity(lengthInMeter, breadthInMeter, heightInMeter, capacityInKg)
+////	                .map(storage -> storageMapper.mapStorageToStorageResponse(storage))
+////	                .orElseThrow(() -> new StorageNotExistException("No storage found with the given dimensions and capacity"));
+////	}
+////	
+//	return null;
    
-}
+
 }
