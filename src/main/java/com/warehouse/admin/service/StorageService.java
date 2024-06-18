@@ -10,13 +10,18 @@ import com.warehouse.admin.utility.ResponseStructure;
 
 public interface StorageService {
 
-	ResponseEntity<ResponseStructure<String>> createStorage(long warehouseId, StorageRequest storageRequest,
-			int noOfStorageUnits);
+	ResponseEntity<ResponseStructure<String>> createStorage(StorageRequest storageRequest, long warehouseId,
+			long storageTypeId, int noOfStorageUnits);
 
 	ResponseEntity<ResponseStructure<StorageResponse>> updateStorage(StorageRequest storageRequest, long storageId);
 
-//	StorageResponse findFirstByLengthAndBreadthAndCapacity(double lengthInMeter, double breadthInMeter,
-//			double heightInMeter, double capacityInKg);
+	ResponseEntity<ResponseStructure<StorageResponse>> getStorage(long storageId);
+
+	ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages();
+
+	
+
+	
 
 
 	 

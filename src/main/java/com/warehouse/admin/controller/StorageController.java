@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,11 +28,14 @@ public class StorageController {
 	private StorageService storageService;
 
 
-	@PostMapping("/warehouse/{warehouseId}/storage")
+	@PostMapping("/warehouse/{warehouseId}/storageTypes/{storageTypeId}/storage")
 	@PreAuthorize("hasAuthority('CREATE_STORAGE')")
-	public ResponseEntity<ResponseStructure<String>> createStorage(@PathVariable long warehouseId,
-			@RequestBody StorageRequest storageRequest, @RequestParam("no_of_storage_units") int noOfStorageUnits) {
-		return storageService.createStorage(warehouseId, storageRequest, noOfStorageUnits);
+	public ResponseEntity<ResponseStructure<String>> createStorage( 
+			@RequestBody StorageRequest storageRequest,
+		@PathVariable long warehouseId,
+		@PathVariable long storageTypeId,
+		@RequestParam("no_of_storage_units") int noOfStorageUnits) {
+		return storageService.createStorage(storageRequest,warehouseId,storageTypeId, noOfStorageUnits);
 	}
 
 	@PutMapping("/storage/{storageId}")
@@ -41,11 +45,15 @@ public class StorageController {
 		return storageService.updateStorage(storageRequest,storageId);
 	}
 
-//	@PostMapping("/demo/{lengthInMeter}/{breadthInMeter}/{heightInMeter}/{capacityInKg}")
-//	public StorageResponse findFirstByLengthAndBreadthAndCapacity(@PathVariable double lengthInMeter,
-//			@PathVariable double  breadthInMeter,
-//			@PathVariable double heightInMeter,
-//			@PathVariable  double capacityInKg) {
-//		return storageService.findFirstByLengthAndBreadthAndCapacity(lengthInMeter,breadthInMeter,heightInMeter,capacityInKg);
-//	}
+	 @GetMapping("/storage/{storageId}")
+	    @PreAuthorize("hasAuthority('READ')")
+	    public ResponseEntity<ResponseStructure<StorageResponse>> getStorage(@PathVariable long storageId){
+	        return  storageService.getStorage(storageId);
+	    }
+	 
+	 @GetMapping("/storages")
+	    @PreAuthorize("hasAuthority('READ')")
+	    public ResponseEntity<ResponseStructure<List<StorageResponse>>> getStorages(){
+	        return storageService.getStorages();
+	    }
 }
