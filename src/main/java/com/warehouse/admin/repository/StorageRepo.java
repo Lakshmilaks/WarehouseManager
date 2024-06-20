@@ -9,6 +9,6 @@ import com.warehouse.admin.entity.Storage;
 
 public interface StorageRepo extends JpaRepository<Storage, Long>{
 
-//	Optional<Storage> findFirstByLengthAndBreadthAndCapacity(double lengthInMeter,double  breadthInMeter,double heightInMeter, double capacityInKg);
+	
 
 	}

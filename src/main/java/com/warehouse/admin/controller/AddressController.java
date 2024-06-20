@@ -15,6 +15,7 @@ import com.warehouse.admin.requestdto.AddressRequest;
 import com.warehouse.admin.requestdto.AdminRequest;
 import com.warehouse.admin.responsedto.AddressResponse;
 import com.warehouse.admin.responsedto.AdminResponse;
+import com.warehouse.admin.responsedto.ClientResponse;
 import com.warehouse.admin.responsedto.WarehouseResponse;
 import com.warehouse.admin.service.AddressService;
 import com.warehouse.admin.utility.ResponseStructure;
@@ -44,8 +45,13 @@ public class AddressController {
 	}
 	
 	@GetMapping("cities/{city}/warehouses")
-	public ResponseEntity<ResponseStructure<List<WarehouseResponse>>> findWarehousesByCity(String city){
-		return addressService.findWarehousesByCity(city);
+	public ResponseEntity<ResponseStructure<List<WarehouseResponse>>> findWarehousesByCityForAdmin(String city){
+		return addressService.findWarehousesByCityForAdmin(city);
+	}
+	
+	@GetMapping("cities/{city}/clients")
+	public ResponseEntity<ResponseStructure<List<WarehouseResponse>>> findWarehousesByCityForClient(String city){
+		return addressService.findWarehousesByCityForClient(city);
 	}
 	
 }

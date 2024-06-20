@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,21 +15,24 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
 @Builder
-public class Client {
+public class Batch {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long clientId;
-	private String businessName;
-	private String email;
-	private long contactno;
-	private String apikey;
+	private long batchId;
+	private int quantity;
 	
-	@OneToMany(mappedBy = "client")
-    private List<Inventory> inventories;
+	@ManyToOne
+    private Storage storage;
+
+    @ManyToOne
+    private Inventory inventory;
+    
+    @OneToMany(mappedBy = "storage")
+    private List<Batch> batch;
 }

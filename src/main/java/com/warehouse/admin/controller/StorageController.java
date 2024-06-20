@@ -28,7 +28,7 @@ public class StorageController {
 	private StorageService storageService;
 
 
-	@PostMapping("/warehouse/{warehouseId}/storageTypes/{storageTypeId}/storage")
+	@PostMapping("/warehouses/{warehouseId}/storageTypes/{storageTypeId}/storage")
 	@PreAuthorize("hasAuthority('CREATE_STORAGE')")
 	public ResponseEntity<ResponseStructure<String>> createStorage( 
 			@RequestBody StorageRequest storageRequest,

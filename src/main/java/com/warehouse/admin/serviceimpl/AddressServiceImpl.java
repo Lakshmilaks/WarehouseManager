@@ -22,6 +22,7 @@ import com.warehouse.admin.repository.WarehouseRepo;
 import com.warehouse.admin.requestdto.AddressRequest;
 import com.warehouse.admin.responsedto.AddressResponse;
 import com.warehouse.admin.responsedto.AdminResponse;
+import com.warehouse.admin.responsedto.ClientResponse;
 import com.warehouse.admin.responsedto.WarehouseResponse;
 import com.warehouse.admin.service.AddressService;
 import com.warehouse.admin.utility.ResponseStructure;
@@ -87,7 +88,23 @@ public class AddressServiceImpl implements AddressService{
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<List<WarehouseResponse>>> findWarehousesByCity(String city) {
+	public ResponseEntity<ResponseStructure<List<WarehouseResponse>>> findWarehousesByCityForAdmin(String city) {
+		List<WarehouseResponse> warehouses = new ArrayList<>();
+		addressRepo.findAllByCity(city).forEach(address->{
+			AddressResponse response = addressMapper.mapAddressResponseToAddress(address);
+			WarehouseResponse warehouseResponse=warehouseMapper.mapWarehouseResponseToWarehouse(address.getWarehouse());
+//			warehouseResponse.setAddressResponse(response);
+			warehouses.add(warehouseResponse);
+			
+		});
+		return ResponseEntity.status(HttpStatus.FOUND).body(new ResponseStructure<List<WarehouseResponse>>()
+				.setStatus(HttpStatus.FOUND.value())
+				.setMessage("warehouses founded!!!")
+				.setData(warehouses));
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<List<WarehouseResponse>>> findWarehousesByCityForClient(String city) {
 		List<WarehouseResponse> warehouses = new ArrayList<>();
 		addressRepo.findAllByCity(city).forEach(address->{
 			AddressResponse response = addressMapper.mapAddressResponseToAddress(address);

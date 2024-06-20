@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.warehouse.admin.requestdto.AddressRequest;
 import com.warehouse.admin.responsedto.AddressResponse;
+import com.warehouse.admin.responsedto.ClientResponse;
 import com.warehouse.admin.responsedto.WarehouseResponse;
 import com.warehouse.admin.utility.ResponseStructure;
 
@@ -21,7 +22,11 @@ public interface AddressService {
 	ResponseEntity<ResponseStructure<AddressResponse>> findAddress(long addressId);
 	
 
-	ResponseEntity<ResponseStructure<List<WarehouseResponse>>> findWarehousesByCity(String city);
+//	ResponseEntity<ResponseStructure<List<WarehouseResponse>>> findWarehousesByCity(String city);
+
+	ResponseEntity<ResponseStructure<List<WarehouseResponse>>> findWarehousesByCityForAdmin(String city);
+
+	ResponseEntity<ResponseStructure<List<WarehouseResponse>>> findWarehousesByCityForClient(String city);
 
 	
 

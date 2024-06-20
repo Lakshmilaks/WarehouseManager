@@ -20,6 +20,7 @@ import com.warehouse.admin.utility.ResponseStructure;
 @RequestMapping("/api/v1")
 public class StorageTypeController {
 
+	
 	@Autowired
 	private StorageTypeService storageTypeService;
 	

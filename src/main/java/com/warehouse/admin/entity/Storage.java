@@ -41,7 +41,7 @@ public class Storage {
 	@ManyToOne
 	private Warehouse warehouse;
 
-	@ManyToMany
+	@ManyToMany(mappedBy = "storages")
 	private List<Inventory> inventories;
 
 	@ManyToOne
