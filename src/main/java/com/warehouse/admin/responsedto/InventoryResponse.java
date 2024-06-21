@@ -28,4 +28,5 @@ public class InventoryResponse {
 	private List<MaterialTypes> materialTypes;
 	private LocalDate restockedAt;
 	private long sellerId;
+	private List<BatchResponse> batchs;
 }

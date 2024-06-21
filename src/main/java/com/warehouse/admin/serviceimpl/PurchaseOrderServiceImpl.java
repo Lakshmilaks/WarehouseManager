@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.warehouse.admin.entity.Batch;
 import com.warehouse.admin.entity.Client;
+import com.warehouse.admin.entity.Inventory;
 import com.warehouse.admin.entity.PurchaseOrders;
 import com.warehouse.admin.exception.InventoryNotExistException;
+import com.warehouse.admin.exception.PurchaseOrderNotCompletedException;
 import com.warehouse.admin.exception.PurchaseOrdersNotExistException;
 import com.warehouse.admin.mapper.PurchaseOrderMapper;
 import com.warehouse.admin.repository.BatchRepo;
@@ -44,23 +46,28 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 			long productId) {
 		
 		return inventoryRepo.findById(productId).map(inventory->{
-			PurchaseOrders purchaseOrders = mapper.mapPurchaseOrderToRequest(purchaseOrderRequest, new PurchaseOrders());
-			purchaseOrders.setInvoiceLink(UUID.randomUUID().toString());
-			Batch batch = new Batch();
-			batch.setBatchId(productId);
-			batch.setQuantity(batch.getQuantity()-purchaseOrders.getOrderQuantity());
-			inventory = inventoryRepo.save(inventory);
-			batch = batchRepo.save(batch);
-
-			purchaseOrders.setInventories(List.of(inventory));
-			purchaseOrders = orderRepo.save(purchaseOrders);
-
-			return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<PurchaseOrderResponse>()
-					.setStatus(HttpStatus.CREATED.value())
-					.setMessage("purchase order created")
-					.setData(mapper.mapPurchaseOrderToResponse(purchaseOrders)));
-		}).orElseThrow(()->new InventoryNotExistException("Inventory Id is not exist!!!!"));
-	}
+			PurchaseOrders purchaseOrder = mapper.mapPurchaseOrderToRequest(purchaseOrderRequest, new PurchaseOrders());
+			purchaseOrder.setInvoiceLink(UUID.randomUUID().toString().concat(".jpg"));
+			 int availableQuantity = inventory.getBatchs().getFirst().getQuantity();
+			 
+	            if(availableQuantity>=purchaseOrderRequest.getOrderQuantity()){
+	                int temp = availableQuantity - purchaseOrder.getOrderQuantity();
+	                Batch batch = inventory.getBatchs().getFirst();
+	                batch.setQuantity(temp);
+	                inventory.getBatchs().addFirst(batch);
+			
+						inventory = inventoryRepo.save(inventory);
+						 purchaseOrder.setInventories(List.of(inventory));
+			                purchaseOrder = orderRepo.save(purchaseOrder);
+			            }else {
+			                throw new PurchaseOrderNotCompletedException("Please reduce quantity");
+			            }
+			         return    ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<PurchaseOrderResponse>()
+			                    .setStatus(HttpStatus.CREATED.value())
+			                    .setMessage("PurchaseOrder Created")
+			                    .setData(mapper.mapPurchaseOrderToResponse(purchaseOrder)));
+			        }).orElseThrow(() -> new InventoryNotExistException("ProductId : " + productId + ", is not exist"));
+			    }
 
 
 	@Override
@@ -85,6 +92,38 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 				.setStatus(HttpStatus.FOUND.value())
 				.setMessage("All Purchase Orders fetched!!!!!")
 				.setData(orderResponses));
+	}
+
+
+	@Override
+	public ResponseEntity<ResponseStructure<PurchaseOrderResponse>> updatePurchaseOrder(
+			PurchaseOrderRequest purchaseOrderRequest, long orderId) {
+		 
+		        return orderRepo.findById(orderId).map(purchaseOrder -> {
+		            int oldOrderQnt = purchaseOrder.getOrderQuantity();
+		            int newOrderQnt = purchaseOrderRequest.getOrderQuantity();
+
+//		         TODO note :-> this method is working only if purchase order have only one inventory
+		            List<Inventory> listInventories = purchaseOrder.getInventories();
+		            if (newOrderQnt > oldOrderQnt) {
+		                int updateOrderQnt = newOrderQnt - oldOrderQnt;
+		                listInventories.forEach(inventory -> {
+//		                    inventory.setQuantity(inventory.getQuantity()-updateOrderQnt);
+		                    inventoryRepo.save(inventory);
+		                });
+		            } else {
+		                int updateOrderQnt = oldOrderQnt - newOrderQnt;
+		                listInventories.forEach(inventory -> {
+//		                    inventory.setQuantity(inventory.getQuantity()+updateOrderQnt);
+		                    inventoryRepo.save(inventory);
+		                });
+		            }
+		            purchaseOrder = mapper.mapPurchaseOrderToRequest(purchaseOrderRequest, purchaseOrder);
+		          return   ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<PurchaseOrderResponse>()
+		                    .setStatus(HttpStatus.OK.value())
+		                    .setMessage("PurchaseOrder Updated")
+		                    .setData(mapper.mapPurchaseOrderToResponse(purchaseOrder)));
+		        }).orElseThrow(() -> new PurchaseOrdersNotExistException("OrderId : " + orderId + ", is not exist"));
 	}
 
 

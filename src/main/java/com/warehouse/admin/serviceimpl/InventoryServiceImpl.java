@@ -2,6 +2,7 @@ package com.warehouse.admin.serviceimpl;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,9 @@ import com.warehouse.admin.entity.Batch;
 import com.warehouse.admin.entity.Client;
 import com.warehouse.admin.entity.Inventory;
 import com.warehouse.admin.entity.Storage;
+import com.warehouse.admin.enums.MaterialTypes;
 import com.warehouse.admin.exception.ClientNotExistException;
+import com.warehouse.admin.exception.IllegalOperationException;
 import com.warehouse.admin.exception.InventoryNotExistException;
 import com.warehouse.admin.exception.InventoryNotExistException;
 import com.warehouse.admin.exception.StorageNotExistException;
@@ -52,61 +55,79 @@ public class InventoryServiceImpl implements InventoryService{
 			long storageId, long clientId,int quantity) {
 	
 	        Client client = clientRepo.findById(clientId).orElseThrow(() -> new ClientNotExistException("ClientId : " + clientId + ", is not exist"));
-	        Batch batch   = batchRepo.findById(batchId).orElseThrow(() -> new BatchNotExistException("BatchId : " + batchId + ", is not exist"));
-	        return storageRepo.findById(storageId).map(storage -> {
+	        Storage storage= storageRepo.findById(storageId).orElseThrow(()-> new StorageNotExistException("StorageId not found!!!"));
+	        
 	            Inventory inventory = inventoryMapper.mapInventoryToInventoryRequest(inventoryRequest, new Inventory());
 	            inventory.setRestockedAt(LocalDate.now());
                 
 	            double productSize = inventory.getBreadthInMeters() * inventory.getHeightInMeters() * inventory.getLengthInMeters();
-	            double updatedStorageArea = storage.getAvailableArea() - (productSize * batch.getQuantity());
-	            storage.setAvailableArea(updatedStorageArea);
+	            double updatedStorageArea = storage.getAvailableArea() - (productSize * quantity );
+	            
+	            if(updatedStorageArea<=0) 
+	            	throw new IllegalOperationException("Insufficient Storage!!!!");
+	            else
+	            	storage.setAvailableArea(updatedStorageArea);
+	            
+	            
+	            double updatedStorageMaxWeight = storage.getMaxAdditionalWeight() - (inventory.getWeightInKg() * quantity);
+	            
+	            if(updatedStorageMaxWeight<=0)
+	            	throw new IllegalOperationException("weight is too much not supported by storage");
+	            else
+	            storage.setMaxAdditionalWeight(updatedStorageMaxWeight);
 
-	            double updatedStorageMaxWeight = storage.getMaxAdditionalWeight() - (inventory.getWeightInKg() * batch.getQuantity());
-	            storage.setMaxAdditionalWeight(clientId);
-
+	            List<MaterialTypes> inventoryMaterialTypes =inventory.getMaterialTypes();
+	            List<MaterialTypes> storageMaterialTypes =storage.getMaterialTypes();
+	            
+	            if(!new HashSet<>(storageMaterialTypes).containsAll(storageMaterialTypes))
+	            	throw new IllegalOperationException("MaterialTypes not matched with storage materials");
+	            
 	            inventory.setClient (client);
-	            inventory.setBatch(batch);
+	            storage.setSellerId(inventory.getSellerId());
 	            storage = storageRepo.save(storage);
 	            inventory.setStorages(List.of(storage));
 
 	            inventory = inventoryRepo.save(inventory);
+	            Batch batch = new Batch();
+	            batch.setQuantity(quantity);
+	            batch.setStorage(storage);
+	            batch.setInventory(inventory);
+	            batch = batchRepo.save(batch);
+	            
+	            
 
-	            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<InventoryResponse>()
+	       return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<InventoryResponse>()
 	                    .setStatus(HttpStatus.CREATED.value())
 	                    .setMessage("Inventory Created")
-	                    .setData(inventoryMapper.mapInventoryToInventoryResponse(inventory)));
-	        }).orElseThrow(() -> new StorageNotExistException("StorageId : " + storageId + ", is not exist"));
-	    }
-
-	@Override
-	public ResponseEntity<ResponseStructure<InventoryResponse>> updateInventory(InventoryRequest inventoryRequest,
-			long productId) {
-		 return inventoryRepo.findById(productId).map(inventory -> {
-	            inventory = inventoryMapper.mapInventoryToInventoryRequest(inventoryRequest, inventory);
-
-	            List<Storage> listStorages = getUpdatedStorages(inventory);
-	            inventory.setStorages(listStorages);
-	            inventory = inventoryRepo.save(inventory);
-	            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<InventoryResponse>()
-	                    .setStatus(HttpStatus.CREATED.value())
-	                    .setMessage("Inventory Updated")
-	                    .setData(inventoryMapper.mapInventoryToInventoryResponse(inventory)));
-	        }).orElseThrow(() -> new InventoryNotExistException("ProductId : " + productId + ", is not exist"));
+	                    .setData(inventoryMapper.mapInventoryToInventoryResponse(inventory,batch)));
 	}
 
-	 private static List<Storage> getUpdatedStorages(Inventory inventory) {
-	        double productSize = inventory.getBreadthInMeters() * inventory.getHeightInMeters() * inventory.getLengthInMeters();
-	        double qnt = inventory.getQuantity();
+	
 
-	        double maxWeight = inventory.getWeightInKg() * inventory.getQuantity();
+	 private static List<Storage> getUpdatedStorages(Inventory inventory, InventoryRequest inventoryRequest) {
+		 double requestProductSize = inventoryRequest.getBreadthInMeters() * inventoryRequest.getHeightInMeters() * inventoryRequest.getLengthInMeters();
+	        double productSize = inventory.getBreadthInMeters() * inventory.getHeightInMeters() * inventory.getLengthInMeters();
+	        
+	        double qnt = inventory.getBatchs().getFirst().getQuantity();
+	        
+	        double reqMaxWeight = inventoryRequest.getWeightInKg() * qnt;
+	        double availableMaxWeight = inventory.getWeightInKg() * qnt;
+
 
 	        List<Storage> listStorages = inventory.getStorages();
 	        listStorages.forEach(storage -> {
-	            double updatedStorageArea = storage.getAvailableArea() - (productSize * qnt);
-	            storage.setAvailableArea(updatedStorageArea);
-
-	            double updatedStorageMaxWeight = storage.getMaxAdditionalWeight() - maxWeight;
-	            storage.setMaxAdditionalWeight(maxWeight);
+	            double updatedStorageArea = storage.getAvailableArea() - ((requestProductSize - productSize) * qnt);
+	            
+	            if (updatedStorageArea <= 0)
+                    throw new IllegalOperationException("Sufficient space in storage");
+                else
+                    storage.setAvailableArea(updatedStorageArea);
+	            
+	            List<MaterialTypes> inventoryMaterialTypes = inventory.getMaterialTypes();
+                List<MaterialTypes> storageMaterialTypes = storage.getMaterialTypes();
+                if (!new HashSet<>(storageMaterialTypes).containsAll(inventoryMaterialTypes))
+                    throw new IllegalOperationException("Material types are not match with storage materials");
+	            
 	        });
 	        return listStorages;
 	    }
@@ -133,17 +154,25 @@ public class InventoryServiceImpl implements InventoryService{
 	                .setMessage("Inventories are Founded")
 	                .setData(inventoryResponses));
 	}
-	
-	
 
-	
-		
-//		return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<InventoryResponse>()
-//				.setStatus(HttpStatus.CREATED.value())
-//				.setMessage("Inventory created")
-//				.setData(inventoryMapper.mapInventoryToInventoryResponse(inventory)));
-//		}).orElseThrow(()->new InventoryNotExistException("StorageId not found"));
 
-	
 
+	@Override
+	public ResponseEntity<ResponseStructure<InventoryResponse>> updateInventory(InventoryRequest inventoryRequest,
+			long productId) {
+		 return inventoryRepo.findById(productId).map(inventory -> {
+	            List<Storage> listStorages = getUpdatedStorages(inventory, inventoryRequest);
+	            inventory = inventoryMapper.mapInventoryToInventoryRequest(inventoryRequest, inventory);
+	            inventory.setRestockedAt(LocalDate.now());
+
+	            inventory.setStorages(listStorages);
+	            inventory = inventoryRepo.save(inventory);
+	            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<InventoryResponse>()
+	                    .setStatus(HttpStatus.CREATED.value())
+	                    .setMessage("Inventory Updated")
+	                    .setData(inventoryMapper.mapInventoryToInventoryResponse(inventory)));
+	        }).orElseThrow(() -> new InventoryNotExistException("ProductId : " + productId + ", is not exist"));
+	}
+	
+	
 }

@@ -19,4 +19,7 @@ public interface PurchaseOrderService {
 
 	ResponseEntity<ResponseStructure<List<PurchaseOrderResponse>>> findOrders();
 
+	ResponseEntity<ResponseStructure<PurchaseOrderResponse>> updatePurchaseOrder(
+			PurchaseOrderRequest purchaseOrderRequest, long orderId);
+
 }

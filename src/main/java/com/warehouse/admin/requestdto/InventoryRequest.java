@@ -16,7 +16,8 @@ public class InventoryRequest {
 	private double breadthInMeters;
 	private double heightInMeters;
 	private double WeightInKg;
-	private int quantity;
+//	private int quantity;
 	private List<MaterialTypes> materialTypes;
+	private LocalDate restockedAt;
 	private long sellerId;
 }

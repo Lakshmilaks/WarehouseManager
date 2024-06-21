@@ -3,6 +3,7 @@ package com.warehouse.admin.entity;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.warehouse.admin.enums.MaterialTypes;
 
 import jakarta.persistence.Entity;
@@ -35,6 +36,7 @@ public class Inventory {
 	private double WeightInKg;
 //	private int quantity;
 	private List<MaterialTypes> materialTypes;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private LocalDate restockedAt;
 	private long sellerId;
 
@@ -48,7 +50,7 @@ public class Inventory {
 	private List<PurchaseOrders> purchaseOrders;
 
 	@OneToMany(mappedBy = "inventory")
-	private List<Batch> batch;
+	private List<Batch> batchs;
 
 	
 }

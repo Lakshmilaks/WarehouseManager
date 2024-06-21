@@ -33,6 +33,7 @@ public class Storage {
 	//	private double breadthInMeter;
 	//	private double heightInMeter;
 	//	private double capacityInKg;
+	private long sellerId;
 	@Enumerated
 	private List<MaterialTypes> materialTypes;
 	private double maxAdditionalWeight;

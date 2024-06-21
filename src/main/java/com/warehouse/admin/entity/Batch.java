@@ -33,6 +33,5 @@ public class Batch {
     @ManyToOne
     private Inventory inventory;
     
-    @OneToMany(mappedBy = "storage")
-    private List<Batch> batch;
+   
 }
